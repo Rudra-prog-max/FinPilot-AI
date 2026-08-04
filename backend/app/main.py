@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from app.api.auth import router as auth_router
 from app.database.init_db import init_db
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.transaction import router as transaction_router
+
 
 app = FastAPI(title="FinPilot API")
 
@@ -23,6 +25,7 @@ def startup():
 
 
 app.include_router(auth_router)
+app.include_router(transaction_router)
 
 
 @app.get("/")
