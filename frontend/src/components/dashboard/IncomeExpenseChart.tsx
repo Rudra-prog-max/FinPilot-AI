@@ -1,53 +1,70 @@
+import { useEffect, useState } from "react";
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { month: "Jan", income: 4000, expense: 2400 },
-  { month: "Feb", income: 3000, expense: 1398 },
-  { month: "Mar", income: 5000, expense: 2800 },
-  { month: "Apr", income: 4780, expense: 3908 },
-  { month: "May", income: 5890, expense: 4800 },
-  { month: "Jun", income: 6390, expense: 3800 },
-];
+import {
+  getDashboardSummary,
+} from "../../services/dashboardService";
 
 export default function IncomeExpenseChart() {
+  const [data, setData] = useState([
+    { name: "Income", amount: 0 },
+    { name: "Expense", amount: 0 },
+  ]);
+
+  useEffect(() => {
+    async function loadChart() {
+      try {
+        const summary = await getDashboardSummary();
+
+        setData([
+          {
+            name: "Income",
+            amount: summary.income,
+          },
+          {
+            name: "Expense",
+            amount: summary.expense,
+          },
+        ]);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    loadChart();
+  }, []);
+
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4">
-        Income vs Expenses
+    <div className="bg-white rounded-xl shadow p-6">
+      <h2 className="text-xl font-semibold mb-6">
+        Income vs Expense
       </h2>
 
-      <div className="h-80">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
+      <ResponsiveContainer
+        width="100%"
+        height={300}
+      >
+        <BarChart data={data}>
+          <XAxis dataKey="name" />
 
-            <Line
-              type="monotone"
-              dataKey="income"
-              stroke="#22c55e"
-              strokeWidth={3}
-            />
+          <YAxis />
 
-            <Line
-              type="monotone"
-              dataKey="expense"
-              stroke="#ef4444"
-              strokeWidth={3}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+          <Tooltip />
+
+          <Bar
+            dataKey="amount"
+            fill="#06b6d4"
+            radius={[8, 8, 0, 0]}
+          />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }
