@@ -16,6 +16,7 @@ class TransactionResponse(BaseModel):
     type: str
     category: str
     created_at: datetime
+    user_id: int
 
     class Config:
         from_attributes = True
