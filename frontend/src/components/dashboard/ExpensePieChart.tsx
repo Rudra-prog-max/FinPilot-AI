@@ -13,6 +13,7 @@ import {
   type ExpenseCategory,
 } from "../../services/dashboardService";
 
+
 const COLORS = [
   "#3B82F6",
   "#22C55E",
@@ -20,60 +21,100 @@ const COLORS = [
   "#EF4444",
   "#8B5CF6",
   "#EC4899",
-  "#06B6D4",
 ];
 
-export default function ExpensePieChart() {
-  const [data, setData] = useState<ExpenseCategory[]>([]);
+
+const ExpensePieChart = () => {
+  const [expenseData, setExpenseData] = useState<ExpenseCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
-    async function loadCategories() {
+    const fetchExpenses = async () => {
       try {
-        const categories = await getExpenseCategories();
-        setData(categories);
+        const data = await getExpenseCategories();
+        setExpenseData(data);
       } catch (error) {
-        console.error("Failed to load expense categories:", error);
+        console.error(
+          "Failed to load expense categories:",
+          error
+        );
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
-    loadCategories();
+    fetchExpenses();
   }, []);
 
+
+  if (loading) {
+    return (
+      <div className="flex h-80 items-center justify-center rounded-xl bg-gray-900 text-gray-400">
+        Loading expenses...
+      </div>
+    );
+  }
+
+
+  if (expenseData.length === 0) {
+    return (
+      <div className="flex h-80 items-center justify-center rounded-xl bg-gray-900 text-gray-400">
+        No expense data available
+      </div>
+    );
+  }
+
+
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 h-full">
-      <h2 className="text-xl font-semibold mb-4">
-        Expense Categories
+    <div className="rounded-xl bg-gray-900 p-6 shadow-lg">
+
+      <h2 className="mb-4 text-xl font-semibold text-white">
+        Expense Distribution
       </h2>
 
-      <div className="h-80">
-        {data.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-500">
-            No expense data available
-          </div>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                dataKey="value"
-                nameKey="name"
-                outerRadius={110}
-                label
-              >
-                {data.map((_, index) => (
-                  <Cell
-                    key={index}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
 
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        )}
-      </div>
+      <ResponsiveContainer width="100%" height={320}>
+        <PieChart>
+
+          <Pie
+            data={expenseData}
+            dataKey="value"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            outerRadius={110}
+            label
+          >
+
+            {expenseData.map((_, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+
+          </Pie>
+
+
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "#111827",
+              border: "none",
+              borderRadius: "8px",
+              color: "#ffffff",
+            }}
+          />
+
+
+          <Legend />
+
+        </PieChart>
+      </ResponsiveContainer>
+
     </div>
   );
-}
+};
+
+
+export default ExpensePieChart;

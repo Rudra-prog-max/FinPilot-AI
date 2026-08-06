@@ -8,6 +8,7 @@ import {
 
 export default function Transactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [form, setForm] = useState({
     title: "",
@@ -28,8 +29,16 @@ export default function Transactions() {
   const balance = income - expense;
 
   async function loadTransactions() {
-    const data = await getTransactions();
-    setTransactions(data);
+    try {
+      setLoading(true);
+
+      const data = await getTransactions();
+      setTransactions(data);
+    } catch (error) {
+      console.error("Failed to load transactions:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -41,26 +50,47 @@ export default function Transactions() {
   ) {
     e.preventDefault();
 
-    await createTransaction({
-      title: form.title,
-      amount: Number(form.amount),
-      type: form.type,
-      category: form.category,
-    });
+    if (!form.title || !form.amount || !form.category) {
+      alert("Please fill in all fields.");
+      return;
+    }
 
-    setForm({
-      title: "",
-      amount: "",
-      type: "expense",
-      category: "",
-    });
+    try {
+      await createTransaction({
+        title: form.title,
+        amount: Number(form.amount),
+        type: form.type,
+        category: form.category,
+      });
 
-    loadTransactions();
+      setForm({
+        title: "",
+        amount: "",
+        type: "expense",
+        category: "",
+      });
+
+      loadTransactions();
+    } catch (error) {
+      console.error("Failed to create transaction:", error);
+    }
   }
 
   async function handleDelete(id: number) {
-    await deleteTransaction(id);
-    loadTransactions();
+    try {
+      await deleteTransaction(id);
+      loadTransactions();
+    } catch (error) {
+      console.error("Failed to delete transaction:", error);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="p-8 text-center text-xl font-semibold">
+        Loading...
+      </div>
+    );
   }
 
   return (
