@@ -12,6 +12,7 @@ import AI from "../pages/AI";
 import Settings from "../pages/Settings";
 import NotFound from "../pages/NotFound";
 
+
 function AppRoutes() {
   return (
     <BrowserRouter>
