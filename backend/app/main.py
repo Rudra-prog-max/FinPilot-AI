@@ -5,7 +5,7 @@ from app.database.init_db import init_db
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.transaction import router as transaction_router
 from app.api.dashboard import router as dashboard_router
-
+from app.api.insights import router as insights_router
 
 app = FastAPI(title="FinPilot API")
 
@@ -28,6 +28,7 @@ def startup():
 app.include_router(auth_router)
 app.include_router(transaction_router)
 app.include_router(dashboard_router)
+app.include_router(insights_router)
 
 
 @app.get("/")

@@ -1,30 +1,88 @@
+import { useEffect, useState } from "react";
 import { Lightbulb } from "lucide-react";
 
+import {
+  getInsights,
+  type Insight,
+} from "../../services/insightService";
+
+
 export default function AIInsights() {
+
+  const [insights, setInsights] = useState<Insight[]>([]);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+
+    const fetchInsights = async () => {
+
+      try {
+
+        const data = await getInsights();
+        setInsights(data);
+
+      } catch (error) {
+
+        console.error(
+          "Failed to load AI insights:",
+          error
+        );
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    };
+
+
+    fetchInsights();
+
+  }, []);
+
+
+
   return (
+
     <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-lg p-6 text-white">
+
       <div className="flex items-center gap-3 mb-4">
+
         <Lightbulb size={28} />
+
         <h2 className="text-2xl font-bold">
           AI Insights
         </h2>
+
       </div>
 
-      <div className="space-y-3">
-        <p>
-          💡 You spent <strong>18%</strong> more on Food compared to last month.
-        </p>
+
+
+      {loading ? (
 
         <p>
-          💰 If you reduce entertainment expenses by ₹2,000 each month,
-          you could save <strong>₹24,000/year</strong>.
+          Generating insights...
         </p>
 
-        <p>
-          📈 Your income has increased by <strong>12%</strong> over the last
-          three months.
-        </p>
-      </div>
+      ) : (
+
+        <div className="space-y-3">
+
+          {insights.map((insight, index) => (
+
+            <p key={index}>
+              💡 {insight.message}
+            </p>
+
+          ))}
+
+        </div>
+
+      )}
+
     </div>
+
   );
 }

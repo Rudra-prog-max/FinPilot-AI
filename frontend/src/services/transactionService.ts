@@ -32,3 +32,20 @@ export const deleteTransaction = async (
   );
   return response.data;
 };
+
+export const updateTransaction = async (
+  id: number,
+  data: {
+    title: string;
+    amount: number;
+    type: string;
+    category: string;
+  }
+) => {
+  const response = await api.put(
+    `/transactions/${id}`,
+    data
+  );
+
+  return response.data;
+};

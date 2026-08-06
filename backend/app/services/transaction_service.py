@@ -57,3 +57,37 @@ def delete_transaction(
     db.commit()
 
     return transaction
+
+
+def update_transaction(
+    db: Session,
+    transaction_id: int,
+    transaction_data: TransactionCreate,
+    user_id: int,
+):
+
+    transaction = (
+        db.query(Transaction)
+        .filter(
+            Transaction.id == transaction_id,
+            Transaction.user_id == user_id,
+        )
+        .first()
+    )
+
+
+    if not transaction:
+        return None
+
+
+    transaction.title = transaction_data.title
+    transaction.amount = transaction_data.amount
+    transaction.type = transaction_data.type
+    transaction.category = transaction_data.category
+
+
+    db.commit()
+    db.refresh(transaction)
+
+
+    return transaction
