@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+/* Global Styles */
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: #0f172a;
+  color: #f8fafc;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+/* Smooth transitions */
+
+* {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

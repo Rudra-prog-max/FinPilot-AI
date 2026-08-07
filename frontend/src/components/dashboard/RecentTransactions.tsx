@@ -1,162 +1,166 @@
 import { useEffect, useState } from "react";
 import {
+  ArrowRight,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Wallet,
+} from "lucide-react";
+
+import {
   getTransactions,
   type Transaction,
 } from "../../services/transactionService";
-
 
 export default function RecentTransactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
-    const fetchTransactions = async () => {
+    async function loadTransactions() {
       try {
         const data = await getTransactions();
+        console.log("Transactions:", data);
 
-        // Show latest transactions first
-        const sortedData = data.sort(
-          (
-            a: Transaction,
-            b: Transaction
-          ) =>
+        const sorted = [...data].sort(
+          (a, b) =>
             new Date(b.created_at).getTime() -
             new Date(a.created_at).getTime()
         );
 
-        setTransactions(sortedData.slice(0, 5));
-
+        setTransactions(sorted.slice(0, 5));
       } catch (error) {
-        console.error(
-          "Failed to fetch transactions:",
-          error
-        );
+        console.error(error);
       } finally {
         setLoading(false);
       }
-    };
+    }
 
-
-    fetchTransactions();
-
+    loadTransactions();
   }, []);
 
-
-
-  if (loading) {
-    return (
-      <div className="bg-white rounded-xl shadow-md p-6">
-        Loading transactions...
-      </div>
-    );
-  }
-
-
-
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
+    <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
 
-      <div className="flex justify-between items-center mb-4">
+      {/* Header */}
+      <div className="mb-6 flex items-center justify-between">
 
-        <h2 className="text-xl font-semibold">
-          Recent Transactions
-        </h2>
+        <div>
+          <h2 className="text-xl font-bold text-white">
+            Recent Transactions
+          </h2>
 
+          <p className="text-sm text-slate-400">
+            Your latest financial activity
+          </p>
+        </div>
 
-        <button className="text-blue-600 hover:underline">
+        <button className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition">
           View All
+          <ArrowRight size={18} />
         </button>
 
       </div>
 
+      {loading ? (
 
-
-      {transactions.length === 0 ? (
-
-        <p className="text-gray-500">
-          No transactions found.
+        <p className="text-slate-400">
+          Loading transactions...
         </p>
+
+      ) : transactions.length === 0 ? (
+
+        <div className="rounded-xl border border-dashed border-slate-700 py-12 text-center">
+
+          <Wallet
+            className="mx-auto mb-4 text-slate-500"
+            size={42}
+          />
+
+          <p className="text-slate-400">
+            No recent transactions found.
+          </p>
+
+        </div>
 
       ) : (
 
-        <div className="overflow-x-auto">
+        <div className="space-y-4">
 
-          <table className="w-full text-left border-collapse">
+          {transactions.map((transaction) => (
 
-            <thead>
+            <div
+              key={transaction.id}
+              className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950 p-4 transition-all duration-300 hover:border-cyan-500/40 hover:shadow-lg hover:shadow-cyan-500/10"
+            >
 
-              <tr className="border-b">
+              {/* Left */}
+              <div className="flex items-center gap-4">
 
-                <th className="py-3">
-                  Date
-                </th>
-
-                <th>
-                  Category
-                </th>
-
-                <th>
-                  Amount
-                </th>
-
-                <th>
-                  Type
-                </th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody>
-
-              {transactions.map((transaction) => (
-
-                <tr
-                  key={transaction.id}
-                  className="border-b hover:bg-gray-50 transition"
+                <div
+                  className={`flex h-12 w-12 items-center justify-center rounded-xl ${
+                    transaction.type === "income"
+                      ? "bg-green-500/20"
+                      : "bg-red-500/20"
+                  }`}
                 >
+                  {transaction.type === "income" ? (
+                    <ArrowDownLeft
+                      className="text-green-400"
+                      size={22}
+                    />
+                  ) : (
+                    <ArrowUpRight
+                      className="text-red-400"
+                      size={22}
+                    />
+                  )}
+                </div>
 
-                  <td className="py-3">
-                    {new Date(
-                      transaction.created_at
-                    ).toLocaleDateString()}
-                  </td>
+                <div>
 
+                  <h3 className="font-semibold text-white">
+                    {transaction.title}
+                  </h3>
 
-                  <td>
+                  <p className="text-sm text-slate-400">
                     {transaction.category}
-                  </td>
+                  </p>
 
+                </div>
 
-                  <td>
-                    ₹{transaction.amount}
-                  </td>
+              </div>
 
+              {/* Right */}
+              <div className="text-right">
 
-                  <td>
+                <p
+                  className={`text-lg font-bold ${
+                    transaction.type === "income"
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
+                  {transaction.type === "income"
+                    ? "+"
+                    : "-"}
+                  ₹{transaction.amount.toLocaleString("en-IN")}
+                </p>
 
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        transaction.type === "income"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {transaction.type}
-                    </span>
+                <p className="text-sm text-slate-500">
+                  {new Date(
+                    transaction.created_at
+                  ).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </p>
 
-                  </td>
+              </div>
 
+            </div>
 
-                </tr>
-
-              ))}
-
-            </tbody>
-
-          </table>
+          ))}
 
         </div>
 

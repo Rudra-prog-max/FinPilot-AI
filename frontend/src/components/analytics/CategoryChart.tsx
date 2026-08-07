@@ -1,42 +1,41 @@
 import { useEffect, useState } from "react";
 import {
+  ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
-  ResponsiveContainer,
   Tooltip,
   Legend,
 } from "recharts";
 import { PieChart as PieChartIcon } from "lucide-react";
 
 import {
-  getExpenseCategories,
-  type ExpenseCategory,
-} from "../../services/dashboardService";
+  getCategoryAnalytics,
+  type CategoryAnalytics,
+} from "../../services/analyticsService";
 
 const COLORS = [
   "#06B6D4",
   "#3B82F6",
   "#8B5CF6",
+  "#22C55E",
   "#F59E0B",
   "#EF4444",
-  "#22C55E",
   "#EC4899",
 ];
 
-export default function ExpensePieChart() {
-  const [expenseData, setExpenseData] = useState<ExpenseCategory[]>([]);
+export default function CategoryChart() {
+  const [data, setData] = useState<CategoryAnalytics[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadExpenses() {
+    async function loadCategories() {
       try {
-        const data = await getExpenseCategories();
-        console.log("Expense Categories:", data);
-        setExpenseData(data);
+        const response = await getCategoryAnalytics();
+        setData(response);
       } catch (error) {
         console.error(
-          "Failed to load expense categories:",
+          "Failed to load category analytics:",
           error
         );
       } finally {
@@ -44,24 +43,24 @@ export default function ExpensePieChart() {
       }
     }
 
-    loadExpenses();
+    loadCategories();
   }, []);
 
   if (loading) {
     return (
       <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
         <p className="text-slate-400">
-          Loading expenses...
+          Loading categories...
         </p>
       </div>
     );
   }
 
-  if (expenseData.length === 0) {
+  if (data.length === 0) {
     return (
       <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
         <p className="text-slate-400">
-          No expense data available.
+          No category data available.
         </p>
       </div>
     );
@@ -70,20 +69,21 @@ export default function ExpensePieChart() {
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
 
-      {/* Header */}
       <div className="mb-6 flex items-center justify-between">
 
         <div>
+
           <h2 className="text-xl font-bold text-white">
-            Expense Distribution
+            Expense Categories
           </h2>
 
           <p className="mt-1 text-sm text-slate-400">
-            Category-wise spending
+            Distribution of your spending
           </p>
+
         </div>
 
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/20">
+        <div className="rounded-xl bg-cyan-500/20 p-3">
           <PieChartIcon
             size={24}
             className="text-cyan-400"
@@ -94,20 +94,20 @@ export default function ExpensePieChart() {
 
       <ResponsiveContainer
         width="100%"
-        height={320}
+        height={330}
       >
         <PieChart>
 
           <Pie
-            data={expenseData}
-            dataKey="value"
-            nameKey="name"
-            innerRadius={70}
-            outerRadius={110}
+            data={data}
+            dataKey="amount"
+            nameKey="category"
+            innerRadius={65}
+            outerRadius={105}
             paddingAngle={4}
             cornerRadius={8}
           >
-            {expenseData.map((_, index) => (
+            {data.map((_, index) => (
               <Cell
                 key={index}
                 fill={COLORS[index % COLORS.length]}
@@ -120,7 +120,7 @@ export default function ExpensePieChart() {
               backgroundColor: "#0F172A",
               border: "1px solid #334155",
               borderRadius: "12px",
-              color: "#ffffff",
+              color: "#fff",
             }}
             formatter={(value) => [
               `₹${Number(value ?? 0).toLocaleString("en-IN")}`,
@@ -129,8 +129,8 @@ export default function ExpensePieChart() {
           />
 
           <Legend
-            verticalAlign="bottom"
             iconType="circle"
+            verticalAlign="bottom"
             wrapperStyle={{
               color: "#CBD5E1",
               paddingTop: "20px",

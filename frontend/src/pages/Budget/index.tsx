@@ -9,6 +9,8 @@ import {
   type BudgetAnalysis,
 } from "../../services/budgetService";
 
+import Button from "../../components/ui/Button";
+
 
 export default function BudgetPage() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
@@ -158,9 +160,9 @@ export default function BudgetPage() {
         />
 
 
-        <button className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-3 rounded-lg">
+        <Button type="submit">
           Add Budget
-        </button>
+        </Button>
 
       </form>
 
@@ -194,14 +196,12 @@ export default function BudgetPage() {
                     {budget.category}
                   </h2>
 
-                  <button
-                    onClick={() =>
-                      handleDelete(budget.id)
-                    }
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                  >
-                    Delete
-                  </button>
+                  <Button
+                     variant="danger"
+                     onClick={() => handleDelete(budget.id)}
+                     >
+                     Delete
+                  </Button>
 
                 </div>
 

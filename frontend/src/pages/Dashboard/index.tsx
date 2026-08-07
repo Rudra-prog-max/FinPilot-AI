@@ -5,20 +5,17 @@ import IncomeExpenseChart from "../../components/dashboard/IncomeExpenseChart";
 import ExpensePieChart from "../../components/dashboard/ExpensePieChart";
 import RecentTransactions from "../../components/dashboard/RecentTransactions";
 import AIInsights from "../../components/dashboard/AIInsights";
+import PageHeader from "../../components/ui/PageHeader";
+
 
 export default function Dashboard() {
   return (
     <Layout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold">
-            Dashboard
-          </h1>
-
-          <p className="text-gray-500 mt-2">
-            Welcome back to FinPilot-AI.
-          </p>
-        </div>
+        <PageHeader
+         title="Dashboard"
+         subtitle="Welcome back to FinPilot-AI."
+        />
 
         <StatsGrid />
 

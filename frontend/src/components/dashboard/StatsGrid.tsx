@@ -1,20 +1,27 @@
 import { useEffect, useState } from "react";
+
 import StatCard from "./StatCard";
+
 import {
   getDashboardSummary,
   type DashboardSummary,
 } from "../../services/dashboardService";
 
 export default function StatsGrid() {
-  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [summary, setSummary] =
+    useState<DashboardSummary | null>(null);
 
   useEffect(() => {
     async function loadSummary() {
       try {
         const data = await getDashboardSummary();
+        console.log("Dashboard Summary:", data);
         setSummary(data);
       } catch (error) {
-        console.error("Failed to load dashboard:", error);
+        console.error(
+          "Failed to load dashboard:",
+          error
+        );
       }
     }
 
@@ -23,41 +30,43 @@ export default function StatsGrid() {
 
   if (!summary) {
     return (
-      <p className="text-gray-500">
+      <div className="text-slate-400 text-center py-10">
         Loading dashboard...
-      </p>
+      </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+
       <StatCard
         title="Total Balance"
         value={`₹${summary.balance}`}
         icon="💰"
-        color="bg-blue-600"
+        color="bg-gradient-to-r from-cyan-600 to-blue-600"
       />
 
       <StatCard
         title="Income"
         value={`₹${summary.income}`}
         icon="📈"
-        color="bg-green-600"
+        color="bg-gradient-to-r from-green-600 to-emerald-500"
       />
 
       <StatCard
         title="Expenses"
         value={`₹${summary.expense}`}
         icon="📉"
-        color="bg-red-600"
+        color="bg-gradient-to-r from-red-600 to-rose-500"
       />
 
       <StatCard
         title="Transactions"
         value={`${summary.transactions}`}
         icon="📋"
-        color="bg-purple-600"
+        color="bg-gradient-to-r from-violet-600 to-purple-500"
       />
+
     </div>
   );
 }

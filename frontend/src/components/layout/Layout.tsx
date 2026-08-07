@@ -14,7 +14,7 @@ function Layout({ children }: LayoutProps) {
       <div className="flex-1">
         <Navbar />
 
-        <main className="p-8 bg-slate-100 min-h-screen">
+        <main className="min-h-screen bg-slate-950 p-8">
           {children}
         </main>
       </div>

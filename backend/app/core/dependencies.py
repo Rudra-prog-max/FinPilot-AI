@@ -37,6 +37,7 @@ def get_current_user(
 
 
     try:
+        print("Incoming token:", token)
 
         payload = jwt.decode(
             token,
@@ -44,15 +45,16 @@ def get_current_user(
             algorithms=[settings.ALGORITHM],
         )
 
+        print("Decoded payload:", payload)
 
         email: str = payload.get("sub")
-
+        print("Email from token:", email)
 
         if email is None:
-            raise credentials_exception
+          raise credentials_exception
 
-
-    except JWTError:
+    except JWTError as e:
+        print("JWT Error:", e)
         raise credentials_exception
 
 
