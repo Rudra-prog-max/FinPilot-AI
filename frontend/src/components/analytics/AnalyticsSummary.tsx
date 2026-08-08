@@ -12,7 +12,8 @@ import {
 } from "../../services/dashboardService";
 
 export default function AnalyticsSummary() {
-  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [summary, setSummary] =
+    useState<DashboardSummary | null>(null);
 
   useEffect(() => {
     async function loadSummary() {
@@ -32,11 +33,11 @@ export default function AnalyticsSummary() {
 
   if (!summary) {
     return (
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[1, 2, 3, 4].map((item) => (
           <div
             key={item}
-            className="h-36 animate-pulse rounded-2xl border border-slate-800 bg-slate-900"
+            className="h-32 animate-pulse rounded-2xl border border-slate-800 bg-slate-900"
           />
         ))}
       </div>
@@ -80,7 +81,7 @@ export default function AnalyticsSummary() {
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map((card) => {
         const Icon = card.icon;
 
