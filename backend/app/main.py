@@ -8,6 +8,7 @@ from app.api.dashboard import router as dashboard_router
 from app.api.insights import router as insights_router
 from app.api.budget import router as budget_router
 from app.api.analytics import router as analytics_router
+from app.api.ai import router as ai_router
 
 app = FastAPI(title="FinPilot API")
 
@@ -33,6 +34,7 @@ app.include_router(dashboard_router)
 app.include_router(insights_router)
 app.include_router(budget_router)
 app.include_router(analytics_router)
+app.include_router(ai_router)
 
 @app.get("/")
 def home():
