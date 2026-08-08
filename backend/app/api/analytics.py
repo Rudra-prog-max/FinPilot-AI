@@ -28,32 +28,44 @@ def monthly_summary(
 ):
     transactions = (
         db.query(Transaction)
-        .filter(Transaction.user_id == current_user.id)
+        .filter(
+            Transaction.user_id == current_user.id
+        )
         .all()
     )
 
-    income = {}
-    expense = {}
+    monthly_data = {}
 
-    for t in transactions:
-        month = t.created_at.strftime("%b")
+    for transaction in transactions:
+        month_key = transaction.created_at.strftime(
+            "%Y-%m"
+        )
 
-        if t.type == "income":
-            income[month] = income.get(month, 0) + t.amount
+        if month_key not in monthly_data:
+            monthly_data[month_key] = {
+                "income": 0,
+                "expense": 0,
+            }
+
+        if transaction.type == "income":
+            monthly_data[month_key]["income"] += (
+                transaction.amount
+            )
         else:
-            expense[month] = expense.get(month, 0) + t.amount
+            monthly_data[month_key]["expense"] += (
+                transaction.amount
+            )
 
-    months = sorted(set(income.keys()) | set(expense.keys()))
+    months = sorted(monthly_data.keys())
 
     return [
         {
             "month": month,
-            "income": income.get(month, 0),
-            "expense": expense.get(month, 0),
+            "income": monthly_data[month]["income"],
+            "expense": monthly_data[month]["expense"],
         }
         for month in months
     ]
-
 
 @router.get("/categories")
 def category_summary(
