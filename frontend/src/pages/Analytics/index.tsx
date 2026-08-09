@@ -1,4 +1,4 @@
-import Layout from "../../components/layout/Layout";
+
 import AnalyticsSummary from "../../components/analytics/AnalyticsSummary";
 import MonthlyChart from "../../components/analytics/MonthlyChart";
 import CategoryChart from "../../components/analytics/CategoryChart";
@@ -6,7 +6,7 @@ import FinancialInsights from "../../components/analytics/FinancialInsights";
 
 export default function Analytics() {
   return (
-    <Layout>
+    <>
       <div className="space-y-6">
         <div>
           <h1 className="text-4xl font-bold text-white">
@@ -30,6 +30,6 @@ export default function Analytics() {
 
         <FinancialInsights />
       </div>
-    </Layout>
+    </>
   );
 }

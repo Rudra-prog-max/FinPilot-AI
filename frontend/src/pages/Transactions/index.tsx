@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
-import Layout from "../../components/layout/Layout";
+
 import SummaryCards from "../../components/transactions/SummaryCards";
 import TransactionForm from "../../components/transactions/TransactionForm";
 import TransactionFilters from "../../components/transactions/TransactionFilters";
@@ -375,7 +375,7 @@ export default function Transactions() {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="flex min-h-[60vh] items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-cyan-400" />
@@ -385,12 +385,12 @@ export default function Transactions() {
             </p>
           </div>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="space-y-6">
         <div className="mb-2">
           <h1 className="text-3xl font-bold text-white">
@@ -451,6 +451,6 @@ export default function Transactions() {
         onClose={() => setDeleteId(null)}
         onConfirm={handleDeleteConfirm}
       />
-    </Layout>
+    </>
   );
 }

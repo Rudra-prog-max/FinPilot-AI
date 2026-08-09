@@ -19,7 +19,6 @@ import {
   type BudgetAnalysis,
 } from "../../services/budgetService";
 
-import Layout from "../../components/layout/Layout";
 
 export default function BudgetPage() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
@@ -177,7 +176,7 @@ export default function BudgetPage() {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="flex min-h-[60vh] items-center justify-center">
           <div className="text-center">
             <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-slate-700 border-t-cyan-400" />
@@ -187,12 +186,12 @@ export default function BudgetPage() {
             </p>
           </div>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="space-y-6">
         {/* Header */}
         <div>
@@ -594,6 +593,6 @@ export default function BudgetPage() {
           )}
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

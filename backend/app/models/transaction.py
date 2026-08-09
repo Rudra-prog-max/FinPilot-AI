@@ -16,13 +16,9 @@ class Transaction(Base):
     __tablename__ = "transactions"
 
     id = Column(Integer, primary_key=True, index=True)
-
     title = Column(String(100), nullable=False)
-
     amount = Column(Float, nullable=False)
-
     type = Column(String(20), nullable=False)
-
     category = Column(String(50), nullable=False)
 
     created_at = Column(
@@ -40,4 +36,3 @@ class Transaction(Base):
         "User",
         back_populates="transactions",
     )
-    
