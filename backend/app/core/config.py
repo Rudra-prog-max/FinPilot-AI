@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     JWT_ISSUER: str = "finpilot-api"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ENVIRONMENT: str = "development"
+    TRUSTED_HOSTS: str = "localhost,127.0.0.1"
     CORS_ORIGINS: str = "http://localhost:5173"
     AUTO_CREATE_DB: bool = True
     RATE_LIMIT_STORAGE_URI: str = "memory://"
@@ -22,6 +24,11 @@ class Settings(BaseSettings):
         env_file=".env",
         extra="ignore",
     )
+
+    @property
+    @property
+    def trusted_hosts_list(self) -> list[str]:
+        return [host.strip() for host in self.TRUSTED_HOSTS.split(",") if host.strip()]
 
     @property
     def cors_origins_list(self) -> list[str]:
