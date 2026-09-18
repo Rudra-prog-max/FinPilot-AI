@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.core.security import hash_password, verify_password
 from app.models.user import User
-from app.schemas.user import UserRegister
+from app.schemas.user import UserRegister, UserUpdate
 
 
 def register_user(db: Session, user: UserRegister):
@@ -45,4 +45,11 @@ def authenticate_user(
     if not verify_password(password, user.hashed_password):
         return None
 
+    return user
+
+
+def update_user_profile(db: Session, user: User, data: UserUpdate):
+    user.full_name = data.full_name
+    db.commit()
+    db.refresh(user)
     return user
