@@ -25,3 +25,7 @@ Production should use a PostgreSQL DATABASE_URL and:
 Do not use automatic table creation in production.
 
 Alembic's autogenerate feature creates candidate migrations by comparing the application metadata with the database schema. Review every generated migration before applying it.
+
+## Money precision
+
+Financial amounts use fixed-precision NUMERIC(14,2) values in the database. Do not change transaction or budget money columns back to floating-point types.
