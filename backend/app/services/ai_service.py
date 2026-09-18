@@ -225,18 +225,16 @@ def get_financial_context(
     )
 
     # --------------------------------------------------------
-    # Budget status
+    # Current-month budget status
     # --------------------------------------------------------
 
     budget_status = []
 
+    current_category_totals = current_month["category_totals"]
+
     for budget in budgets:
         category = budget.category.strip().lower()
-
-        spent = category_totals.get(
-            category,
-            0,
-        )
+        spent = current_category_totals.get(category, 0)
 
         percentage = (
             (spent / budget.monthly_limit) * 100
@@ -244,9 +242,7 @@ def get_financial_context(
             else 0
         )
 
-        remaining = (
-            budget.monthly_limit - spent
-        )
+        remaining = budget.monthly_limit - spent
 
         budget_status.append({
             "category": budget.category,
@@ -1290,10 +1286,11 @@ def analyze_affordability(
 
     if balance <= 0:
         return (
-            f"Your current balance is ₹{balance:,.0f}.\n\n"
-            f"⚠️ I wouldn't recommend spending "
-            f"₹{amount:,.0f} right now because "
-            "your available balance isn't positive."
+            f"Your recorded balance is ₹{balance:,.0f}.\n\n"
+            f"⚠️ A purchase of ₹{amount:,.0f} does not fit "
+            "within your currently recorded balance. "
+            "This check does not include unrecorded cash, "
+            "future income, or upcoming bills."
         )
 
     remaining = balance - amount
