@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BudgetCreate(BaseModel):
@@ -14,8 +14,7 @@ class BudgetResponse(BaseModel):
     monthly_limit: Decimal
     user_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BudgetAnalysisResponse(BaseModel):
