@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     DATABASE_URL: str
     ALGORITHM: str = "HS256"
+    JWT_ISSUER: str = "finpilot-api"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     CORS_ORIGINS: str = "http://localhost:5173"
     AUTO_CREATE_DB: bool = True
