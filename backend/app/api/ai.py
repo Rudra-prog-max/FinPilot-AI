@@ -42,11 +42,11 @@ class ChatResponse(BaseModel):
 @router.post("/chat", response_model=ChatResponse)
 def chat(
     request: Request,
-    request: ChatRequest,
+    payload: ChatRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    message = request.message.strip()
+    message = payload.message.strip()
 
     if not message:
         return {
