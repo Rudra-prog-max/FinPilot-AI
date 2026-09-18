@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.database.session import SessionLocal
 
 from app.schemas.budget import (
     BudgetCreate,
@@ -16,7 +15,7 @@ from app.services.budget_service import (
     get_budget_analysis,
 )
 
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_db
 from app.models.user import User
 
 
