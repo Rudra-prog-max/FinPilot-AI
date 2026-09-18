@@ -4,12 +4,16 @@ import pytest
 from pydantic import ValidationError
 
 from app.models.budget import Budget
+from app.models.user import User
 from app.models.transaction import Transaction
 from app.schemas.transaction import TransactionCreate
 from app.schemas.user import UserRegister
 from app.services.ai_service import get_financial_context
 from app.services.auth_service import authenticate_user, register_user
 from app.services.budget_service import get_budget_analysis
+from app.core.security import create_access_token
+from app.core.dependencies import get_current_user
+from fastapi.security import HTTPAuthorizationCredentials
 from app.services.transaction_service import (
     create_transaction,
     delete_transaction,
@@ -285,6 +289,23 @@ def test_password_policy_is_enforced():
             password="nonumber1",
         )
 
+
+
+def test_session_version_invalidates_old_token(db_session):
+    user = User(full_name="Session User", email="session@example.com", hashed_password="hash")
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+
+    token = create_access_token({"sub": str(user.id), "ver": user.session_version})
+    credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials=token)
+    assert get_current_user(credentials, db_session).id == user.id
+
+    user.session_version += 1
+    db_session.commit()
+
+    with pytest.raises(Exception):
+        get_current_user(credentials, db_session)
 
 
 def test_money_values_preserve_cents(db_session, users, current_month):
