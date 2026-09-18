@@ -1,0 +1,8 @@
+Database schema migrations live in the versions directory.
+
+Run from the backend directory:
+
+- alembic upgrade head — apply all migrations
+- alembic current — show the current database revision
+- alembic history — show migration history
+- alembic revision --autogenerate -m "describe change" — generate a candidate migration, then review it before applying.
