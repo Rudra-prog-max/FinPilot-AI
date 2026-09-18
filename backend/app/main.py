@@ -1,5 +1,8 @@
-from fastapi import FastAPI
+import logging
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.core.config import settings
 from app.api.auth import router as auth_router
@@ -12,7 +15,9 @@ from app.api.ai import router as ai_router
 from app.database.init_db import init_db
 
 
-app = FastAPI(title=settings.APP_NAME)
+logger = logging.getLogger("finpilot")
+
+app = FastAPI(title=settings.APP_NAME, version=settings.API_VERSION)
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,6 +31,24 @@ app.add_middleware(
 @app.on_event("startup")
 def startup():
     init_db()
+
+
+@app.get("/health", tags=["System"])
+def health_check():
+    return {"status": "ok", "service": settings.APP_NAME}
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    logger.exception(
+        "Unhandled API error on %s %s",
+        request.method,
+        request.url.path,
+    )
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An unexpected server error occurred."},
+    )
 
 
 app.include_router(auth_router)
