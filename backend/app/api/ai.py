@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_current_user, get_db
@@ -30,7 +30,7 @@ router = APIRouter(
 
 
 class ChatRequest(BaseModel):
-    message: str
+    message: str = Field(min_length=1, max_length=1000)
 
 
 class ChatResponse(BaseModel):
@@ -48,6 +48,11 @@ def chat(
     if not message:
         return {
             "response": "Please enter a message so I can help you."
+        }
+
+    if len(message) > 1000:
+        return {
+            "response": "Please keep your message under 1000 characters."
         }
 
     context = get_financial_context(
