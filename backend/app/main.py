@@ -3,9 +3,10 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
+
+from app.core.rate_limit import limiter
 
 from app.core.config import settings
 from app.api.auth import router as auth_router
@@ -19,13 +20,6 @@ from app.database.init_db import init_db
 
 
 logger = logging.getLogger("finpilot")
-
-limiter = Limiter(
-    key_func=get_remote_address,
-    default_limits=[settings.RATE_LIMIT_DEFAULT],
-    storage_uri=settings.RATE_LIMIT_STORAGE_URI,
-    enabled=settings.RATE_LIMIT_ENABLED,
-)
 
 app = FastAPI(
     title=settings.APP_NAME,
