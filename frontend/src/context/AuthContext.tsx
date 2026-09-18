@@ -1,20 +1,11 @@
 import {
-  createContext,
   useEffect,
   useState,
 } from "react";
 import type { ReactNode } from "react";
 
 import { getCurrentUser, logoutCurrentUser } from "../services/userService";
-
-export interface AuthContextType {
-  isAuthenticated: boolean;
-  isInitializing: boolean;
-  login: () => void;
-  logout: () => Promise<void>;
-}
-
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { AuthContext } from "./auth-context";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -63,10 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => {
       mounted = false;
-      window.removeEventListener(
-        "finpilot:unauthorized",
-        handleUnauthorized
-      );
+      window.removeEventListener("finpilot:unauthorized", handleUnauthorized);
     };
   }, []);
 
