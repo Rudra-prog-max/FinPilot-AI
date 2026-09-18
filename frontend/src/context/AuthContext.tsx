@@ -1,30 +1,72 @@
 import {
   createContext,
-  useContext,
   useEffect,
   useState,
 } from "react";
 import type { ReactNode } from "react";
 
-interface AuthContextType {
+import { getCurrentUser, logoutCurrentUser } from "../services/userService";
+
+export interface AuthContextType {
   isAuthenticated: boolean;
+  isInitializing: boolean;
   login: () => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    () => Boolean(localStorage.getItem("token"))
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    const handleUnauthorized = () => setIsAuthenticated(false);
+    let mounted = true;
+
+    const handleUnauthorized = () => {
+      localStorage.removeItem("token");
+      if (mounted) {
+        setIsAuthenticated(false);
+      }
+    };
+
     window.addEventListener("finpilot:unauthorized", handleUnauthorized);
 
+    async function restoreSession() {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        if (mounted) {
+          setIsInitializing(false);
+        }
+        return;
+      }
+
+      try {
+        await getCurrentUser();
+        if (mounted) {
+          setIsAuthenticated(true);
+        }
+      } catch {
+        localStorage.removeItem("token");
+        if (mounted) {
+          setIsAuthenticated(false);
+        }
+      } finally {
+        if (mounted) {
+          setIsInitializing(false);
+        }
+      }
+    }
+
+    void restoreSession();
+
     return () => {
-      window.removeEventListener("finpilot:unauthorized", handleUnauthorized);
+      mounted = false;
+      window.removeEventListener(
+        "finpilot:unauthorized",
+        handleUnauthorized
+      );
     };
   }, []);
 
@@ -32,24 +74,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAuthenticated(true);
   }
 
-  function logout() {
-    localStorage.removeItem("token");
-    setIsAuthenticated(false);
+  async function logout() {
+    try {
+      if (localStorage.getItem("token")) {
+        await logoutCurrentUser();
+      }
+    } finally {
+      localStorage.removeItem("token");
+      setIsAuthenticated(false);
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isInitializing,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth must be used inside AuthProvider");
-  }
-
-  return context;
 }
