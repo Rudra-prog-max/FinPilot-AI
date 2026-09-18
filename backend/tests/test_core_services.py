@@ -284,3 +284,32 @@ def test_password_policy_is_enforced():
             email="valid@example.com",
             password="nonumber1",
         )
+
+
+
+def test_money_values_preserve_cents(db_session, users, current_month):
+    user_a, _ = users
+
+    make_transaction(
+        db_session,
+        user_a.id,
+        "Coffee",
+        19.95,
+        "expense",
+        "Food",
+        current_month,
+    )
+    make_transaction(
+        db_session,
+        user_a.id,
+        "Snack",
+        0.05,
+        "expense",
+        "Food",
+        current_month,
+    )
+
+    transactions = get_transactions(db_session, user_a.id)
+    total = sum(item.amount for item in transactions)
+
+    assert str(total) == "20.00"
