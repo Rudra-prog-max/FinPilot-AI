@@ -1,15 +1,17 @@
+from decimal import Decimal
+
 from pydantic import BaseModel, Field
 
 
 class BudgetCreate(BaseModel):
     category: str = Field(min_length=1, max_length=100)
-    monthly_limit: float = Field(gt=0)
+    monthly_limit: Decimal = Field(gt=0, max_digits=14, decimal_places=2)
 
 
 class BudgetResponse(BaseModel):
     id: int
     category: str
-    monthly_limit: float
+    monthly_limit: Decimal
     user_id: int
 
     class Config:
@@ -18,7 +20,7 @@ class BudgetResponse(BaseModel):
 
 class BudgetAnalysisResponse(BaseModel):
     category: str
-    limit: float
-    spent: float
-    remaining: float
-    percentage: float
+    limit: Decimal
+    spent: Decimal
+    remaining: Decimal
+    percentage: Decimal
