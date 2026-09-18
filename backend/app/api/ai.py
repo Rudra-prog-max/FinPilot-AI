@@ -57,8 +57,6 @@ def chat(
 
     intent = detect_intent(message)
 
-    print("AI MESSAGE:", message)
-    print("AI INTENT:", intent)
 
     if intent == "spending":
         response = analyze_spending(
@@ -126,8 +124,6 @@ def chat(
 
     else:
         response = general_response()
-
-    print("AI RESPONSE:", response)
 
     return {
         "response": response
