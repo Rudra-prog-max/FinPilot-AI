@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Float
+from sqlalchemy import Column, ForeignKey, Integer, Numeric, String
 
 from app.database.base import Base
 
@@ -20,6 +20,6 @@ class Budget(Base):
     )
 
     monthly_limit = Column(
-        Float,
+        Numeric(14, 2),
         nullable=False,
     )
