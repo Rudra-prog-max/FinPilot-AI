@@ -3,6 +3,9 @@ import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
 
 from app.core.config import settings
 from app.api.auth import router as auth_router
@@ -17,15 +20,45 @@ from app.database.init_db import init_db
 
 logger = logging.getLogger("finpilot")
 
-app = FastAPI(title=settings.APP_NAME, version=settings.API_VERSION)
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=[settings.RATE_LIMIT_DEFAULT],
+    storage_uri=settings.RATE_LIMIT_STORAGE_URI,
+    enabled=settings.RATE_LIMIT_ENABLED,
+)
+
+app = FastAPI(
+    title=settings.APP_NAME,
+    version=settings.API_VERSION,
+)
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+
+    if request.url.scheme == "https":
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=31536000; includeSubDomains"
+        )
+
+    return response
 
 
 @app.on_event("startup")
@@ -35,7 +68,8 @@ def startup():
 
 
 @app.get("/health", tags=["System"])
-def health_check():
+@limiter.limit("30/minute")
+def health_check(request: Request):
     return {"status": "ok", "service": settings.APP_NAME}
 
 
