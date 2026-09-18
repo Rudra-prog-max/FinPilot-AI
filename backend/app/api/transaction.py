@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.database.session import SessionLocal
 from app.schemas.transaction import (
     TransactionCreate,
     TransactionResponse,
@@ -12,7 +11,7 @@ from app.services.transaction_service import (
     delete_transaction,
     update_transaction,
 )
-from app.core.dependencies import get_current_user
+from app.core.dependencies import get_current_user, get_db
 from app.models.user import User
 
 
@@ -21,13 +20,6 @@ router = APIRouter(
     tags=["Transactions"],
 )
 
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 
