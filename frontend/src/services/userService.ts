@@ -15,3 +15,8 @@ export async function updateCurrentUser(full_name: string): Promise<UserProfile>
   const response = await api.put<UserProfile>("/auth/me", { full_name });
   return response.data;
 }
+
+
+export async function logoutCurrentUser(): Promise<void> {
+  await api.post("/auth/logout");
+}
