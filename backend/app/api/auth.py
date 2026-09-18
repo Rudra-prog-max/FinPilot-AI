@@ -65,6 +65,7 @@ def login(
     access_token = create_access_token(
         data={
             "sub": str(authenticated_user.id),
+            "ver": authenticated_user.session_version,
         }
     )
 
@@ -86,3 +87,14 @@ def update_me(
     current_user: User = Depends(get_current_user),
 ):
     return update_user_profile(db, current_user, user_data)
+
+
+@router.post("/logout")
+def logout(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    current_user.session_version += 1
+    db.commit()
+
+    return {"message": "Logged out successfully"}
