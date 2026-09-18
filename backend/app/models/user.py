@@ -11,10 +11,21 @@ class User(Base):
     full_name = Column(String(100), nullable=False)
     email = Column(String(255), unique=True, index=True, nullable=False)
     hashed_password = Column(String(255), nullable=False)
-    session_version = Column(Integer, nullable=False, default=0, server_default="0")
+    session_version = Column(
+        Integer,
+        nullable=False,
+        default=0,
+        server_default="0",
+    )
 
     transactions = relationship(
         "Transaction",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
+    budgets = relationship(
+        "Budget",
         back_populates="user",
         cascade="all, delete-orphan",
     )
