@@ -62,7 +62,7 @@ def login(
 
     access_token = create_access_token(
         data={
-            "sub": authenticated_user.email,
+            "sub": str(authenticated_user.id),
         }
     )
 
