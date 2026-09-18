@@ -30,7 +30,8 @@ app.add_middleware(
 
 @app.on_event("startup")
 def startup():
-    init_db()
+    if settings.AUTO_CREATE_DB:
+        init_db()
 
 
 @app.get("/health", tags=["System"])
