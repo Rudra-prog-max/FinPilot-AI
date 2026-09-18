@@ -1,13 +1,13 @@
 from sqlalchemy import (
     Column,
-    Integer,
-    String,
-    Float,
-    ForeignKey,
     DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
 )
-from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from app.database.base import Base
 
@@ -17,7 +17,7 @@ class Transaction(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(100), nullable=False)
-    amount = Column(Float, nullable=False)
+    amount = Column(Numeric(14, 2), nullable=False)
     type = Column(String(20), nullable=False)
     category = Column(String(50), nullable=False)
 
