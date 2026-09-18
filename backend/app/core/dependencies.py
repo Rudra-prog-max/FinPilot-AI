@@ -36,23 +36,25 @@ def get_current_user(
             token,
             settings.SECRET_KEY,
             algorithms=[settings.ALGORITHM],
+            issuer=settings.JWT_ISSUER,
         )
-        subject = payload.get("sub")
 
-        if subject is None:
+        subject = payload.get("sub")
+        token_version = payload.get("ver")
+
+        if subject is None or token_version is None:
             raise credentials_exception
 
-        try:
-            user_id = int(subject)
-            user = db.query(User).filter(User.id == user_id).first()
-        except (TypeError, ValueError):
-            # Backward compatibility for tokens created before the ID-based subject.
-            user = db.query(User).filter(User.email == subject).first()
+        user = (
+            db.query(User)
+            .filter(User.id == int(subject))
+            .first()
+        )
 
-    except JWTError:
-        raise credentials_exception
+        if user is None or user.session_version != int(token_version):
+            raise credentials_exception
 
-    if user is None:
+    except (JWTError, TypeError, ValueError):
         raise credentials_exception
 
     return user
