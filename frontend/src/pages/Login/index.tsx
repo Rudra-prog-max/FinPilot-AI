@@ -25,7 +25,7 @@ function Login() {
       });
 
       localStorage.setItem("token", response.access_token);
-      login();
+      await login();
       navigate("/dashboard", { replace: true });
     } catch {
       setError("Invalid email or password.");
