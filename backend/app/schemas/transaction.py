@@ -1,12 +1,14 @@
-from pydantic import BaseModel
 from datetime import datetime
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TransactionCreate(BaseModel):
-    title: str
-    amount: float
-    type: str
-    category: str
+    title: str = Field(..., min_length=1, max_length=120)
+    amount: float = Field(..., gt=0, le=100_000_000)
+    type: Literal["income", "expense"]
+    category: str = Field(..., min_length=1, max_length=80)
 
 
 class TransactionResponse(BaseModel):
@@ -18,5 +20,4 @@ class TransactionResponse(BaseModel):
     created_at: datetime
     user_id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
