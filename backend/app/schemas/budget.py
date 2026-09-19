@@ -1,9 +1,9 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class BudgetCreate(BaseModel):
-    category: str
-    monthly_limit: float
+    category: str = Field(..., min_length=1, max_length=80)
+    monthly_limit: float = Field(..., gt=0, le=100_000_000)
 
 
 class BudgetResponse(BaseModel):
@@ -12,25 +12,7 @@ class BudgetResponse(BaseModel):
     monthly_limit: float
     user_id: int
 
-    class Config:
-        from_attributes = True
-
-from pydantic import BaseModel
-
-
-class BudgetCreate(BaseModel):
-    category: str
-    monthly_limit: float
-
-
-class BudgetResponse(BaseModel):
-    id: int
-    category: str
-    monthly_limit: float
-    user_id: int
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BudgetAnalysisResponse(BaseModel):
