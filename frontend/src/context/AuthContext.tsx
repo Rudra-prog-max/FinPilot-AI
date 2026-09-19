@@ -5,16 +5,18 @@ import {
   useState,
 } from "react";
 import type { ReactNode } from "react";
+import { getCurrentUser } from "../services/authService";
 
 export interface User {
   id: number;
-  name: string;
+  full_name: string;
   email: string;
 }
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: () => void;
+  user: User | null;
+  login: () => Promise<void>;
   logout: () => void;
 }
 
@@ -27,23 +29,37 @@ export function AuthProvider({
 }: {
   children: ReactNode;
 }) {
-  const [isAuthenticated, setIsAuthenticated] =
-    useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (token) {
-      setIsAuthenticated(true);
+    if (!token) {
+      return;
     }
+
+    getCurrentUser()
+      .then((currentUser) => {
+        setUser(currentUser);
+        setIsAuthenticated(true);
+      })
+      .catch(() => {
+        localStorage.removeItem("token");
+        setUser(null);
+        setIsAuthenticated(false);
+      });
   }, []);
 
-  function login() {
+  async function login() {
+    const currentUser = await getCurrentUser();
+    setUser(currentUser);
     setIsAuthenticated(true);
   }
 
   function logout() {
     localStorage.removeItem("token");
+    setUser(null);
     setIsAuthenticated(false);
   }
 
@@ -51,6 +67,7 @@ export function AuthProvider({
     <AuthContext.Provider
       value={{
         isAuthenticated,
+        user,
         login,
         logout,
       }}
