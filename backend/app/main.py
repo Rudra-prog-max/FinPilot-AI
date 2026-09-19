@@ -13,6 +13,7 @@ from app.database.init_db import init_db
 
 app = FastAPI(title="FinPilot API")
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.FRONTEND_URL],
@@ -39,3 +40,8 @@ app.include_router(ai_router)
 @app.get("/")
 def home():
     return {"message": "FinPilot API is running 🚀"}
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
