@@ -8,7 +8,7 @@ from app.schemas.user import UserRegister, UserUpdate
 def register_user(db: Session, user: UserRegister):
     existing_user = (
         db.query(User)
-        .filter(User.email == user.email)
+         .filter(User.email == str(user.email).strip().lower())
         .first()
     )
 
@@ -16,8 +16,8 @@ def register_user(db: Session, user: UserRegister):
         return None
 
     new_user = User(
-        full_name=user.full_name,
-        email=user.email,
+        full_name=user.full_name.strip(),
+        email=str(user.email).strip().lower(),
         hashed_password=hash_password(user.password),
     )
 
@@ -35,7 +35,7 @@ def authenticate_user(
 ):
     user = (
         db.query(User)
-        .filter(User.email == email)
+         .filter(User.email == email.strip().lower())
         .first()
     )
 
