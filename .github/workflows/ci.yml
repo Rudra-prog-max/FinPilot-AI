@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - run: SECRET_KEY=ci-test-secret DATABASE_URL=sqlite:///./ci.db pytest -q
+      - run: PYTHONPATH=. SECRET_KEY=ci-test-secret DATABASE_URL=sqlite:///./ci.db pytest -q
 
   frontend:
     runs-on: ubuntu-latest
