@@ -1,14 +1,18 @@
-import {
-  createContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
 import { getCurrentUser, logoutCurrentUser } from "../services/userService";
 
+export interface AuthContextType {
+  isAuthenticated: boolean;
+  isInitializing: boolean;
+  login: () => void;
+  logout: () => Promise<void>;
+}
 
-export interface AuthContextType {\n  isAuthenticated: boolean;\n  isInitializing: boolean;\n  login: () => void;\n  logout: () => Promise<void>;\n}\n\nexport const AuthContext = createContext<AuthContextType | undefined>(undefined);\n\nexport function AuthProvider({ children }: { children: ReactNode }) {
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
@@ -17,9 +21,7 @@ export interface AuthContextType {\n  isAuthenticated: boolean;\n  isInitializin
 
     const handleUnauthorized = () => {
       localStorage.removeItem("token");
-      if (mounted) {
-        setIsAuthenticated(false);
-      }
+      if (mounted) setIsAuthenticated(false);
     };
 
     window.addEventListener("finpilot:unauthorized", handleUnauthorized);
@@ -28,26 +30,18 @@ export interface AuthContextType {\n  isAuthenticated: boolean;\n  isInitializin
       const token = localStorage.getItem("token");
 
       if (!token) {
-        if (mounted) {
-          setIsInitializing(false);
-        }
+        if (mounted) setIsInitializing(false);
         return;
       }
 
       try {
         await getCurrentUser();
-        if (mounted) {
-          setIsAuthenticated(true);
-        }
+        if (mounted) setIsAuthenticated(true);
       } catch {
         localStorage.removeItem("token");
-        if (mounted) {
-          setIsAuthenticated(false);
-        }
+        if (mounted) setIsAuthenticated(false);
       } finally {
-        if (mounted) {
-          setIsInitializing(false);
-        }
+        if (mounted) setIsInitializing(false);
       }
     }
 
@@ -75,14 +69,7 @@ export interface AuthContextType {\n  isAuthenticated: boolean;\n  isInitializin
   }
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        isInitializing,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, isInitializing, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
