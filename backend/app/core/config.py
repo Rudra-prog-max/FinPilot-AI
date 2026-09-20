@@ -26,7 +26,6 @@ class Settings(BaseSettings):
     )
 
     @property
-    @property
     def trusted_hosts_list(self) -> list[str]:
         return [host.strip() for host in self.TRUSTED_HOSTS.split(",") if host.strip()]
 
