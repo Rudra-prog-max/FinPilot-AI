@@ -25,6 +25,7 @@ from app.services.ai_service import (
     general_response,
 )
 
+
 router = APIRouter(
     prefix="/ai",
     tags=["AI Assistant"],
@@ -40,6 +41,7 @@ class ChatResponse(BaseModel):
 
 
 @router.post("/chat", response_model=ChatResponse)
+@limiter.limit(settings.RATE_LIMIT_AI)
 def chat(
     request: Request,
     payload: ChatRequest,
@@ -53,11 +55,6 @@ def chat(
             "response": "Please enter a message so I can help you."
         }
 
-    if len(message) > 1000:
-        return {
-            "response": "Please keep your message under 1000 characters."
-        }
-
     context = get_financial_context(
         db,
         current_user.id,
@@ -65,74 +62,31 @@ def chat(
 
     intent = detect_intent(message)
 
-
     if intent == "spending":
-        response = analyze_spending(
-            context,
-            message,
-        )
-
+        response = analyze_spending(context, message)
     elif intent == "current_month":
-        response = analyze_current_month(
-            context,
-        )
-
+        response = analyze_current_month(context)
     elif intent == "previous_month":
-        response = analyze_previous_month(
-            context,
-        )
-
+        response = analyze_previous_month(context)
     elif intent == "month_comparison":
-        response = analyze_monthly_comparison(
-            context,
-        )
-
+        response = analyze_monthly_comparison(context)
     elif intent == "savings":
-        response = analyze_savings(
-            context,
-        )
-
+        response = analyze_savings(context)
     elif intent == "health":
-        response = analyze_health(
-            context,
-        )
-
+        response = analyze_health(context)
     elif intent == "budget":
-        response = analyze_budget(
-            context,
-            message,
-        )
-
+        response = analyze_budget(context, message)
     elif intent == "categories":
-        response = analyze_categories(
-            context,
-            message,
-        )
-
+        response = analyze_categories(context, message)
     elif intent == "affordability":
-        response = analyze_affordability(
-            context,
-            message,
-        )
-
+        response = analyze_affordability(context, message)
     elif intent == "cut_spending":
-        response = analyze_cut_spending(
-            context,
-        )
-
+        response = analyze_cut_spending(context)
     elif intent == "income":
-        response = analyze_income(
-            context,
-        )
-
+        response = analyze_income(context)
     elif intent == "balance":
-        response = analyze_balance(
-            context,
-        )
-
+        response = analyze_balance(context)
     else:
         response = general_response()
 
-    return {
-        "response": response
-    }
+    return {"response": response}
