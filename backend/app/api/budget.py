@@ -1,20 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-
 from app.schemas.budget import (
     BudgetCreate,
     BudgetResponse,
     BudgetAnalysisResponse,
 )
-
 from app.services.budget_service import (
     create_budget,
     get_budgets,
     delete_budget,
     get_budget_analysis,
 )
-
 from app.core.dependencies import get_current_user, get_db
 from app.models.user import User
 
@@ -23,16 +20,6 @@ router = APIRouter(
     prefix="/budget",
     tags=["Budget"],
 )
-
-
-def get_db():
-    db = SessionLocal()
-
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 
 @router.post(
@@ -51,7 +38,6 @@ def add_budget(
     )
 
 
-
 @router.get(
     "/",
     response_model=list[BudgetResponse],
@@ -64,7 +50,6 @@ def list_budgets(
         db,
         current_user.id,
     )
-
 
 
 @router.delete("/{budget_id}")
@@ -88,7 +73,6 @@ def remove_budget(
     return {
         "message": "Budget deleted successfully"
     }
-
 
 
 @router.get(
