@@ -52,6 +52,20 @@ def list_budgets(
     )
 
 
+@router.get(
+    "/analysis",
+    response_model=list[BudgetAnalysisResponse],
+)
+def budget_analysis(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return get_budget_analysis(
+        db,
+        current_user.id,
+    )
+
+
 @router.delete("/{budget_id}")
 def remove_budget(
     budget_id: int,
@@ -73,17 +87,3 @@ def remove_budget(
     return {
         "message": "Budget deleted successfully"
     }
-
-
-@router.get(
-    "/analysis",
-    response_model=list[BudgetAnalysisResponse],
-)
-def budget_analysis(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    return get_budget_analysis(
-        db,
-        current_user.id,
-    )
