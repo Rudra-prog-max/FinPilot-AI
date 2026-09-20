@@ -32,7 +32,6 @@ export default function ExpensePieChart() {
     async function loadExpenses() {
       try {
         const data = await getExpenseCategories();
-        console.log("Expense Categories:", data);
         setExpenseData(data);
       } catch (error) {
         console.error(
@@ -44,7 +43,7 @@ export default function ExpensePieChart() {
       }
     }
 
-    loadExpenses();
+    void loadExpenses();
   }, []);
 
   if (loading) {
@@ -69,15 +68,12 @@ export default function ExpensePieChart() {
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
-
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
-
         <div>
           <h2 className="text-xl font-bold text-white">
             Expense Distribution
           </h2>
-
           <p className="mt-1 text-sm text-slate-400">
             Category-wise spending
           </p>
@@ -89,15 +85,10 @@ export default function ExpensePieChart() {
             className="text-cyan-400"
           />
         </div>
-
       </div>
 
-      <ResponsiveContainer
-        width="100%"
-        height={320}
-      >
+      <ResponsiveContainer width="100%" height={320}>
         <PieChart>
-
           <Pie
             data={expenseData}
             dataKey="value"
@@ -136,10 +127,8 @@ export default function ExpensePieChart() {
               paddingTop: "20px",
             }}
           />
-
         </PieChart>
       </ResponsiveContainer>
-
     </div>
   );
 }
