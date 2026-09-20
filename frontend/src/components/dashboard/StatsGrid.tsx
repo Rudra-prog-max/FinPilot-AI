@@ -8,24 +8,19 @@ import {
 } from "../../services/dashboardService";
 
 export default function StatsGrid() {
-  const [summary, setSummary] =
-    useState<DashboardSummary | null>(null);
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
 
   useEffect(() => {
     async function loadSummary() {
       try {
         const data = await getDashboardSummary();
-        console.log("Dashboard Summary:", data);
         setSummary(data);
       } catch (error) {
-        console.error(
-          "Failed to load dashboard:",
-          error
-        );
+        console.error("Failed to load dashboard:", error);
       }
     }
 
-    loadSummary();
+    void loadSummary();
   }, []);
 
   if (!summary) {
@@ -38,7 +33,6 @@ export default function StatsGrid() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-
       <StatCard
         title="Total Balance"
         value={`₹${summary.balance}`}
@@ -66,7 +60,6 @@ export default function StatsGrid() {
         icon="📋"
         color="bg-gradient-to-r from-violet-600 to-purple-500"
       />
-
     </div>
   );
 }
