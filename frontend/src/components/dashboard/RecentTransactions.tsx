@@ -19,7 +19,6 @@ export default function RecentTransactions() {
     async function loadTransactions() {
       try {
         const data = await getTransactions();
-        console.log("Transactions:", data);
 
         const sorted = [...data].sort(
           (a, b) =>
@@ -35,20 +34,17 @@ export default function RecentTransactions() {
       }
     }
 
-    loadTransactions();
+    void loadTransactions();
   }, []);
 
   return (
     <div className="rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-lg">
-
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
-
         <div>
           <h2 className="text-xl font-bold text-white">
             Recent Transactions
           </h2>
-
           <p className="text-sm text-slate-400">
             Your latest financial activity
           </p>
@@ -58,44 +54,31 @@ export default function RecentTransactions() {
           View All
           <ArrowRight size={18} />
         </button>
-
       </div>
 
       {loading ? (
-
         <p className="text-slate-400">
           Loading transactions...
         </p>
-
       ) : transactions.length === 0 ? (
-
         <div className="rounded-xl border border-dashed border-slate-700 py-12 text-center">
-
           <Wallet
             className="mx-auto mb-4 text-slate-500"
             size={42}
           />
-
           <p className="text-slate-400">
             No recent transactions found.
           </p>
-
         </div>
-
       ) : (
-
         <div className="space-y-4">
-
           {transactions.map((transaction) => (
-
             <div
               key={transaction.id}
               className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950 p-4 transition-all duration-300 hover:border-cyan-500/40 hover:shadow-lg hover:shadow-cyan-500/10"
             >
-
               {/* Left */}
               <div className="flex items-center gap-4">
-
                 <div
                   className={`flex h-12 w-12 items-center justify-center rounded-xl ${
                     transaction.type === "income"
@@ -117,22 +100,17 @@ export default function RecentTransactions() {
                 </div>
 
                 <div>
-
                   <h3 className="font-semibold text-white">
                     {transaction.title}
                   </h3>
-
                   <p className="text-sm text-slate-400">
                     {transaction.category}
                   </p>
-
                 </div>
-
               </div>
 
               {/* Right */}
               <div className="text-right">
-
                 <p
                   className={`text-lg font-bold ${
                     transaction.type === "income"
@@ -140,32 +118,25 @@ export default function RecentTransactions() {
                       : "text-red-400"
                   }`}
                 >
-                  {transaction.type === "income"
-                    ? "+"
-                    : "-"}
+                  {transaction.type === "income" ? "+" : "-"}
                   ₹{transaction.amount.toLocaleString("en-IN")}
                 </p>
 
                 <p className="text-sm text-slate-500">
-                  {new Date(
-                    transaction.created_at
-                  ).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
+                  {new Date(transaction.created_at).toLocaleDateString(
+                    "en-IN",
+                    {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    }
+                  )}
                 </p>
-
               </div>
-
             </div>
-
           ))}
-
         </div>
-
       )}
-
     </div>
   );
 }
